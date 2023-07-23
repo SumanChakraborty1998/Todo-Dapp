@@ -1,54 +1,45 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.9;
 
 contract Todo {
     uint256 public numberOfTasks;
 
     struct Task {
-        uint256 id;
         string description;
         bool completed;
-        uint priority;
     }
 
-    mapping(uint256 => Task) public tasks;
+    Task[] public tasksList;
 
-    event TaskCreated(
-        uint256 id,
-        string description,
-        bool completed,
-        uint priority
-    );
+    event TaskCreated(string description, bool completed);
 
     function addTask(string memory _description) public {
+        Task memory newTask = Task(_description, false);
+        tasksList.push(newTask);
         numberOfTasks++;
-        tasks[numberOfTasks] = Task(
-            numberOfTasks,
-            _description,
-            false,
-            numberOfTasks
-        );
-        emit TaskCreated(numberOfTasks, _description, false, numberOfTasks);
+        emit TaskCreated(_description, false);
     }
 
     function prioritiseTask(uint256 _id) external {
-        require(_id >= 1, "Invalid Id");
+        require(_id >= 1, "Currently It is Top Priority Task");
+        require(_id < numberOfTasks, "Task is not Present");
 
-        Task memory currentTask = tasks[_id];
-        Task memory previousTask = tasks[_id - 1];
-
-        tasks[_id] = previousTask;
-        tasks[_id - 1] = currentTask;
-
-        tasks[_id].priority = currentTask.priority;
-        tasks[_id - 1].priority = previousTask.priority;
+        Task memory temp = tasksList[_id];
+        tasksList[_id] = tasksList[_id - 1];
+        tasksList[_id - 1] = temp;
     }
 
-    function toggleTask(uint256 _id) external {
-        tasks[_id].completed = !tasks[_id].completed;
+    function dePrioritiseTask(uint256 _id) external {
+        require(_id < numberOfTasks - 1, "Currently It is Less Priority Task");
+        require(_id >= 0, "Task is not Present");
+
+        Task memory temp = tasksList[_id];
+        tasksList[_id] = tasksList[_id + 1];
+        tasksList[_id + 1] = temp;
     }
 
     function deleteTask(uint256 _id) external {
-        delete tasks[_id];
+        tasksList[_id] = tasksList[tasksList.length - 1];
+        tasksList.pop();
     }
 }
