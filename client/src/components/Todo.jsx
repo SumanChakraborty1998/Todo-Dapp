@@ -28,7 +28,7 @@ export const Todo = () => {
   };
 
   const connectToDatabase = async () => {
-    console.log(address, abi);
+    // console.log(address, abi);
 
     if (window.ethereum) {
       await connect();
@@ -58,7 +58,7 @@ export const Todo = () => {
     for (let i = 0; i < number.toString(); i++) {
       const tasks = await contract.tasksList(i);
       //   await tasks.wait();
-      console.log(tasks);
+      // console.log(tasks);
       if (tasks.description !== "") {
         list.push(tasks);
       }
@@ -66,7 +66,7 @@ export const Todo = () => {
     setTaskList(list);
     setIsLoading(false);
 
-    console.log(taskList);
+    // console.log(taskList);
   };
 
   const handleDelete = async (id) => {
@@ -102,7 +102,7 @@ export const Todo = () => {
     asyncFunc();
   }, []);
 
-  console.log(taskList);
+  // console.log(taskList);
 
   return (
     <div>
